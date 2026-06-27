@@ -3,8 +3,10 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from google import genai
 import os 
+from market_service import get_stock_info
 
 class QuestionRequest(BaseModel):
+    symbol : str
     question: str
 
 load_dotenv()
@@ -24,8 +26,13 @@ def root():
 @app.post("/analyze")
 def analyze(request: QuestionRequest):
 
+    market_data = get_stock_info(request.symbol)
+
     prompt = f"""
     You are an expert financial research analyst.
+
+    Stock Information:
+    {market_data}
     
     Answer the following financial question clearly and professionally.
     
