@@ -28,6 +28,8 @@ def analyze(request: QuestionRequest):
 
     market_data = get_stock_info(request.symbol)
 
+    print(market_data)
+
     prompt = f"""
     You are an expert financial research analyst.
     
@@ -36,12 +38,10 @@ def analyze(request: QuestionRequest):
     Company Name: {market_data["name"]}
     Current Price: {market_data["current_price"]}
     Sector: {market_data["sector"]}
-    Market Cap: {market_data["market_cap"]}
-    52 Week High: {market_data["52_week_high"]}
-    52 Week Low: {market_data["52_week_low"]}
-    Volume: {market_data["volume"]}
-    Average Volume: {market_data["average_volume"]}
     1 Month Return: {market_data["one_month_return_percent"]}%
+    
+    Recent News:
+    {market_data["recent_news"]}
     
     Question:
     {request.question}
@@ -49,9 +49,10 @@ def analyze(request: QuestionRequest):
     Guidelines:
     - Use simple language.
     - Mention risks where appropriate.
-    - Mention both bullish and bearish factors.
+    - Mention bullish and bearish factors.
+    - Use recent news if relevant.
     - This is educational information and not financial advice.
-    """
+    """ 
 
 
     response = client.models.generate_content(

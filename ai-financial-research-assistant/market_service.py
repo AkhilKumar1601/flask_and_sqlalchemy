@@ -18,6 +18,20 @@ def get_stock_info(symbol):
             2
         )
 
+    news = stock.news[:5]
+
+
+    for article in news:
+        print(article)
+        print("=" * 50)
+
+    news_headlines = []
+
+    for article in news:
+        news_headlines.append(
+            article.get("content", {}).get("title")
+        )
+
     return {
         "name": info.get("longName"),
         "current_price": info.get("currentPrice"),
@@ -27,5 +41,6 @@ def get_stock_info(symbol):
         "52_week_low": info.get("fiftyTwoWeekLow"),
         "volume": info.get("volume"),
         "average_volume": info.get("averageVolume"),
-        "one_month_return_percent": one_month_return
+        "one_month_return_percent": one_month_return,
+        "recent_news": news_headlines
     }
