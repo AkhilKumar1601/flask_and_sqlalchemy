@@ -30,11 +30,18 @@ def analyze(request: QuestionRequest):
 
     prompt = f"""
     You are an expert financial research analyst.
-
-    Stock Information:
-    {market_data}
     
-    Answer the following financial question clearly and professionally.
+    Stock Information:
+    
+    Company Name: {market_data["name"]}
+    Current Price: {market_data["current_price"]}
+    Sector: {market_data["sector"]}
+    Market Cap: {market_data["market_cap"]}
+    52 Week High: {market_data["52_week_high"]}
+    52 Week Low: {market_data["52_week_low"]}
+    Volume: {market_data["volume"]}
+    Average Volume: {market_data["average_volume"]}
+    1 Month Return: {market_data["one_month_return_percent"]}%
     
     Question:
     {request.question}
@@ -42,9 +49,11 @@ def analyze(request: QuestionRequest):
     Guidelines:
     - Use simple language.
     - Mention risks where appropriate.
-    - If discussing investments, mention that this is educational information and not financial advice.
+    - Mention both bullish and bearish factors.
+    - This is educational information and not financial advice.
     """
-    
+
+
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
