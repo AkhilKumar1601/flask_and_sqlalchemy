@@ -1,12 +1,20 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,ValidationError
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from google import genai
 import os
 import json
-
 from market_service import get_stock_info
+from typing import List
 
+
+class AnalysisResponse(BaseModel):
+    summary: str
+    bullish_factors: List[str]
+    bearish_factors: List[str]
+    risks: List[str]
+    investment_horizon: str
+    disclaimer: str
 
 class QuestionRequest(BaseModel):
     symbol: str
@@ -80,8 +88,10 @@ Return only JSON.
     print(response.text)
 
     try:
-        analysis = json.loads(response.text)
-
+        analysis = AnalysisResponse(
+            **json.loads(response.text)
+        )
+     
         return {
             "symbol": request.symbol,
             "market_data": market_data,
@@ -90,6 +100,14 @@ Return only JSON.
 
     except json.JSONDecodeError:
         return {
-            "error": "Model returned invalid JSON.",
+            "error": "Model returned invalid JSON",
             "raw_response": response.text
         }
+
+    except ValidationError as e:
+        return {
+            "error": "Model returned invalid schema",
+            "details": e.errors(),
+            "raw_response": response.text
+        }
+    
