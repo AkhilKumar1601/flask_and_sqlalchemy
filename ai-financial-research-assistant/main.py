@@ -34,31 +34,45 @@ def analyze(request: QuestionRequest):
     You are an expert financial research analyst.
     
     Stock Information:
-    
-    Company Name: {market_data["name"]}
-    Current Price: {market_data["current_price"]}
-    Sector: {market_data["sector"]}
-    1 Month Return: {market_data["one_month_return_percent"]}%
-    
-    Recent News:
-    {market_data["recent_news"]}
+    {market_data}
     
     Question:
     {request.question}
     
-    Guidelines:
-    - Use simple language.
-    - Mention risks where appropriate.
-    - Mention bullish and bearish factors.
-    - Use recent news if relevant.
-    - This is educational information and not financial advice.
-    """ 
+    Return your response ONLY in valid JSON format.
+    
+    Required JSON structure:
+    
+    {{
+        "summary": "Short summary of the stock situation.",
+        "bullish_factors": [
+            "factor1",
+            "factor2"
+        ],
+        "bearish_factors": [
+            "factor1",
+            "factor2"
+        ],
+        "risks": [
+            "risk1",
+            "risk2"
+        ],
+        "investment_horizon": "Short Term / Medium Term / Long Term",
+        "disclaimer": "Educational information only and not financial advice."
+    }}
+    
+    Do not include markdown.
+    Do not use triple backticks.
+    Return only JSON.
+    """
 
 
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt
     )
+
+    print(response.text)
 
     return {
         "answer": response.text
